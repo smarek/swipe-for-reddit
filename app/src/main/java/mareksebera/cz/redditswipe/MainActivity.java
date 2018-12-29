@@ -35,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         }
 
-        mViewPagerAdapter = new SwipeViewPagerAdapter(getSupportFragmentManager());
+        mViewPagerAdapter = new SwipeViewPagerAdapter(this, getSupportFragmentManager(), "https://www.reddit.com/r/funny+gifs+videos+all.json");
         mViewPager.setAdapter(mViewPagerAdapter);
+
     }
 
     @Override

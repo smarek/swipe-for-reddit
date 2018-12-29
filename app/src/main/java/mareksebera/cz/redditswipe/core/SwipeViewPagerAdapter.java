@@ -6,31 +6,40 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.android.volley.VolleyError;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import mareksebera.cz.redditswipe.fragments.BasicItemFragment;
 import mareksebera.cz.redditswipe.fragments.ImageItemFragment;
 import mareksebera.cz.redditswipe.fragments.TextItemFragment;
 import mareksebera.cz.redditswipe.fragments.VideoItemFragment;
 import mareksebera.cz.redditswipe.immutables.ImmutableGeneralListing;
+import mareksebera.cz.redditswipe.immutables.ImmutableGeneralListingItem;
 
 public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private boolean loaded = false;
-    private int currentCount = 0;
-    private ImmutableGeneralListing response = null;
+    private WeakReference<Context> ctx;
+    private String baseUrl;
+    private ArrayList<ImmutableGeneralListingItem> items = new ArrayList<>();
+    private ImmutableGeneralListing lastResponse = null;
     private PagerAdapterLoader redditLoader;
 
     public SwipeViewPagerAdapter(Context ctx, FragmentManager fm, String baseUrl) {
         super(fm);
+        this.ctx = new WeakReference<>(ctx);
+        this.baseUrl = baseUrl;
         redditLoader = new PagerAdapterLoader();
         redditLoader.load(ctx, baseUrl, new PagerAdapterLoader.LoaderCallback() {
             @Override
             public void success(@NonNull ImmutableGeneralListing response) {
                 loaded = true;
-                SwipeViewPagerAdapter.this.response = response;
-                SwipeViewPagerAdapter.this.currentCount += response.getData().getChildren().size();
+                SwipeViewPagerAdapter.this.items.addAll(response.getData().getChildren());
+                SwipeViewPagerAdapter.this.lastResponse = response;
                 SwipeViewPagerAdapter.this.notifyDataSetChanged();
             }
 
@@ -43,13 +52,36 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private RedditItem internalGetItem(int position) {
         RedditItem ri = RedditItem.DUMMY;
-        if (response != null &&
-                response.getData() != null &&
-                response.getData().getChildren() != null &&
-                response.getData().getChildren().size() > position) {
-            ri = RedditItem.fromGeneralListingItem(response.getData().getChildren().get(position));
+        if (items.size() > position) {
+            ri = RedditItem.fromGeneralListingItem(items.get(position));
+
+            if (position >= (items.size() - 3)) {
+                loadMore();
+            }
         }
         return ri;
+    }
+
+    private void loadMore() {
+        redditLoader.loadMore(ctx.get(), baseUrl, lastResponse.getData().getAfter(), new PagerAdapterLoader.LoaderCallback() {
+            @Override
+            public void success(@NonNull ImmutableGeneralListing response) {
+                SwipeViewPagerAdapter.this.items.addAll(response.getData().getChildren());
+                SwipeViewPagerAdapter.this.lastResponse = response;
+                SwipeViewPagerAdapter.this.notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(@NonNull VolleyError error) {
+
+            }
+        });
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        Log.d("PagerAdapter", "notifyDataSetChanged, new count " + items.size());
     }
 
     @Override
@@ -79,6 +111,6 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return loaded ? currentCount : 0;
+        return loaded ? items.size() : 0;
     }
 }

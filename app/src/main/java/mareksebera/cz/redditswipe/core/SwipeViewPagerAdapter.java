@@ -79,6 +79,6 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return loaded ? currentCount : 1;
+        return loaded ? currentCount : 0;
     }
 }

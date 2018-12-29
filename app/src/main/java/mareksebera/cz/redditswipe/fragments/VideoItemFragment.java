@@ -45,6 +45,10 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             loadVideo();
+        } else {
+            if (videoView != null) {
+                videoView.stopPlayback();
+            }
         }
     }
 
@@ -90,9 +94,11 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
 
     @Override
     public void onPrepared() {
-        videoView.setRepeatMode(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
         if (isUserVisible) {
-            videoView.start();
+            if (videoView != null) {
+                videoView.setRepeatMode(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
+                videoView.start();
+            }
         } else {
             Log.d("VideoItemFragment", "not starting video");
         }

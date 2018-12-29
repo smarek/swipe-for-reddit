@@ -20,10 +20,10 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
-            android:layout_marginTop="?attr/actionBarSize"
+            style="@style/Base.TextAppearance.AppCompat.Button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            style="@style/Base.TextAppearance.AppCompat.Button"/>
+            android:layout_marginTop="?attr/actionBarSize" />
     </FrameLayout>
 
     <android.support.design.widget.NavigationView

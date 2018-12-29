@@ -23,31 +23,12 @@ import android.view.MotionEvent;
 public interface ZoomableController {
 
     /**
-     * Listener interface.
+     * Gets whether the controller is enabled. This should return the last value passed to
+     * {@link #setEnabled}.
+     *
+     * @return whether the controller is enabled.
      */
-    interface Listener {
-
-        /**
-         * Notifies the view that the transform began.
-         *
-         * @param transform the current transform matrix
-         */
-        void onTransformBegin(Matrix transform);
-
-        /**
-         * Notifies the view that the transform changed.
-         *
-         * @param transform the new matrix
-         */
-        void onTransformChanged(Matrix transform);
-
-        /**
-         * Notifies the view that the transform ended.
-         *
-         * @param transform the current transform matrix
-         */
-        void onTransformEnd(Matrix transform);
-    }
+    boolean isEnabled();
 
     /**
      * Enables the controller. The controller is enabled when the image has been loaded.
@@ -55,14 +36,6 @@ public interface ZoomableController {
      * @param enabled whether to enable the controller
      */
     void setEnabled(boolean enabled);
-
-    /**
-     * Gets whether the controller is enabled. This should return the last value passed to
-     * {@link #setEnabled}.
-     *
-     * @return whether the controller is enabled.
-     */
-    boolean isEnabled();
 
     /**
      * Sets the listener for the controller to call back when the matrix changes.
@@ -136,4 +109,31 @@ public interface ZoomableController {
      * @return whether the controller handled the event
      */
     boolean onTouchEvent(MotionEvent event);
+
+    /**
+     * Listener interface.
+     */
+    interface Listener {
+
+        /**
+         * Notifies the view that the transform began.
+         *
+         * @param transform the current transform matrix
+         */
+        void onTransformBegin(Matrix transform);
+
+        /**
+         * Notifies the view that the transform changed.
+         *
+         * @param transform the new matrix
+         */
+        void onTransformChanged(Matrix transform);
+
+        /**
+         * Notifies the view that the transform ended.
+         *
+         * @param transform the current transform matrix
+         */
+        void onTransformEnd(Matrix transform);
+    }
 }

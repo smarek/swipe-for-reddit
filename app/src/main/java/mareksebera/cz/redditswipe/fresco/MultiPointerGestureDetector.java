@@ -23,37 +23,15 @@ import android.view.MotionEvent;
  */
 public class MultiPointerGestureDetector {
 
-    /**
-     * The listener for receiving notifications when gestures occur.
-     */
-    public interface Listener {
-        /**
-         * A callback called right before the gesture is about to start.
-         */
-        void onGestureBegin(MultiPointerGestureDetector detector);
-
-        /**
-         * A callback called each time the gesture gets updated.
-         */
-        void onGestureUpdate(MultiPointerGestureDetector detector);
-
-        /**
-         * A callback called right after the gesture has finished.
-         */
-        void onGestureEnd(MultiPointerGestureDetector detector);
-    }
-
     private static final int MAX_POINTERS = 2;
-
-    private boolean mGestureInProgress;
-    private int mPointerCount;
-    private int mNewPointerCount;
     private final int mId[] = new int[MAX_POINTERS];
     private final float mStartX[] = new float[MAX_POINTERS];
     private final float mStartY[] = new float[MAX_POINTERS];
     private final float mCurrentX[] = new float[MAX_POINTERS];
     private final float mCurrentY[] = new float[MAX_POINTERS];
-
+    private boolean mGestureInProgress;
+    private int mPointerCount;
+    private int mNewPointerCount;
     private Listener mListener = null;
 
     public MultiPointerGestureDetector() {
@@ -65,6 +43,19 @@ public class MultiPointerGestureDetector {
      */
     public static MultiPointerGestureDetector newInstance() {
         return new MultiPointerGestureDetector();
+    }
+
+    /**
+     * Gets the number of pressed pointers (fingers down).
+     */
+    private static int getPressedPointerCount(MotionEvent event) {
+        int count = event.getPointerCount();
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_UP ||
+                action == MotionEvent.ACTION_POINTER_UP) {
+            count--;
+        }
+        return count;
     }
 
     /**
@@ -137,19 +128,6 @@ public class MultiPointerGestureDetector {
             }
         }
         return (i < count) ? i : -1;
-    }
-
-    /**
-     * Gets the number of pressed pointers (fingers down).
-     */
-    private static int getPressedPointerCount(MotionEvent event) {
-        int count = event.getPointerCount();
-        int action = event.getActionMasked();
-        if (action == MotionEvent.ACTION_UP ||
-                action == MotionEvent.ACTION_POINTER_UP) {
-            count--;
-        }
-        return count;
     }
 
     private void updatePointersOnTap(MotionEvent event) {
@@ -289,5 +267,25 @@ public class MultiPointerGestureDetector {
      */
     public float[] getCurrentY() {
         return mCurrentY;
+    }
+
+    /**
+     * The listener for receiving notifications when gestures occur.
+     */
+    public interface Listener {
+        /**
+         * A callback called right before the gesture is about to start.
+         */
+        void onGestureBegin(MultiPointerGestureDetector detector);
+
+        /**
+         * A callback called each time the gesture gets updated.
+         */
+        void onGestureUpdate(MultiPointerGestureDetector detector);
+
+        /**
+         * A callback called right after the gesture has finished.
+         */
+        void onGestureEnd(MultiPointerGestureDetector detector);
     }
 }

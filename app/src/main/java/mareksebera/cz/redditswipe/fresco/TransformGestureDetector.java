@@ -23,28 +23,7 @@ import android.view.MotionEvent;
  */
 public class TransformGestureDetector implements MultiPointerGestureDetector.Listener {
 
-    /**
-     * The listener for receiving notifications when gestures occur.
-     */
-    public interface Listener {
-        /**
-         * A callback called right before the gesture is about to start.
-         */
-        void onGestureBegin(TransformGestureDetector detector);
-
-        /**
-         * A callback called each time the gesture gets updated.
-         */
-        void onGestureUpdate(TransformGestureDetector detector);
-
-        /**
-         * A callback called right after the gesture has finished.
-         */
-        void onGestureEnd(TransformGestureDetector detector);
-    }
-
     private final MultiPointerGestureDetector mDetector;
-
     private Listener mListener = null;
 
     public TransformGestureDetector(MultiPointerGestureDetector multiPointerGestureDetector) {
@@ -204,5 +183,25 @@ public class TransformGestureDetector implements MultiPointerGestureDetector.Lis
             float currentAngle = (float) Math.atan2(currentDeltaY, currentDeltaX);
             return currentAngle - startAngle;
         }
+    }
+
+    /**
+     * The listener for receiving notifications when gestures occur.
+     */
+    public interface Listener {
+        /**
+         * A callback called right before the gesture is about to start.
+         */
+        void onGestureBegin(TransformGestureDetector detector);
+
+        /**
+         * A callback called each time the gesture gets updated.
+         */
+        void onGestureUpdate(TransformGestureDetector detector);
+
+        /**
+         * A callback called right after the gesture has finished.
+         */
+        void onGestureEnd(TransformGestureDetector detector);
     }
 }

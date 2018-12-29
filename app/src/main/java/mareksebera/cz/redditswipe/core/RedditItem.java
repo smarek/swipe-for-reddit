@@ -10,10 +10,9 @@ import mareksebera.cz.redditswipe.immutables.ImmutableGeneralListingItem;
 import mareksebera.cz.redditswipe.immutables.ImmutableGeneralListingItemData;
 
 public class RedditItem implements Serializable {
+    public static final RedditItem DUMMY = new RedditItem();
     public final RedditItemType TYPE;
     public final ImmutableGeneralListingItemData DATA;
-
-    public static final RedditItem DUMMY = new RedditItem();
 
     public RedditItem() {
         TYPE = RedditItemType.TYPE_DUMMY;
@@ -58,10 +57,11 @@ public class RedditItem implements Serializable {
             case TYPE_IMAGE:
                 return R.layout.image_fragment;
             default:
+            case TYPE_LINK:
             case TYPE_DUMMY:
                 return R.layout.dummy_fragment;
             case TYPE_TEXT:
-                return R.layout.dummy_fragment;
+                return R.layout.text_fragment;
         }
     }
 }

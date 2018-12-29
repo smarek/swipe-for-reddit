@@ -30,63 +30,56 @@ import java.lang.annotation.RetentionPolicy;
 public class DefaultZoomableController
         implements ZoomableController, TransformGestureDetector.Listener {
 
-    @IntDef(flag = true, value = {
-            LIMIT_NONE,
-            LIMIT_TRANSLATION_X,
-            LIMIT_TRANSLATION_Y,
-            LIMIT_SCALE,
-            LIMIT_ALL
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface LimitFlag {
-    }
-
     public static final int LIMIT_NONE = 0;
     public static final int LIMIT_TRANSLATION_X = 1;
     public static final int LIMIT_TRANSLATION_Y = 2;
     public static final int LIMIT_SCALE = 4;
     public static final int LIMIT_ALL = LIMIT_TRANSLATION_X | LIMIT_TRANSLATION_Y | LIMIT_SCALE;
-
     private static final float EPS = 1e-3f;
-
     private static final Class<?> TAG = DefaultZoomableController.class;
-
     private static final RectF IDENTITY_RECT = new RectF(0, 0, 1, 1);
-
-    private TransformGestureDetector mGestureDetector;
-
-    private @Nullable
-    Listener mListener = null;
-
-    private boolean mIsEnabled = false;
-    private boolean mIsRotationEnabled = false;
-    private boolean mIsScaleEnabled = true;
-    private boolean mIsTranslationEnabled = true;
-
-    private float mMinScaleFactor = 1.0f;
-    private float mMaxScaleFactor = 2.0f;
-
     // View bounds, in view-absolute coordinates
     private final RectF mViewBounds = new RectF();
     // Non-transformed image bounds, in view-absolute coordinates
     private final RectF mImageBounds = new RectF();
     // Transformed image bounds, in view-absolute coordinates
     private final RectF mTransformedImageBounds = new RectF();
-
     private final Matrix mPreviousTransform = new Matrix();
     private final Matrix mActiveTransform = new Matrix();
     private final Matrix mActiveTransformInverse = new Matrix();
     private final float[] mTempValues = new float[9];
     private final RectF mTempRect = new RectF();
+    private TransformGestureDetector mGestureDetector;
+    private @Nullable
+    Listener mListener = null;
+    private boolean mIsEnabled = false;
+    private boolean mIsRotationEnabled = false;
+    private boolean mIsScaleEnabled = true;
+    private boolean mIsTranslationEnabled = true;
+    private float mMinScaleFactor = 1.0f;
+    private float mMaxScaleFactor = 2.0f;
     private boolean mWasTransformCorrected;
+    public DefaultZoomableController(TransformGestureDetector gestureDetector) {
+        mGestureDetector = gestureDetector;
+        mGestureDetector.setListener(this);
+    }
 
     public static DefaultZoomableController newInstance() {
         return new DefaultZoomableController(TransformGestureDetector.newInstance());
     }
 
-    public DefaultZoomableController(TransformGestureDetector gestureDetector) {
-        mGestureDetector = gestureDetector;
-        mGestureDetector.setListener(this);
+    /**
+     * Checks whether the specified limit flag is present in the limits provided.
+     *
+     * <p> If the flag contains multiple flags together using a bitwise OR, this only checks that at
+     * least one of the flags is included.
+     *
+     * @param limits the limits to apply
+     * @param flag   the limit flag(s) to check for
+     * @return true if the flag (or one of the flags) is included in the limits
+     */
+    private static boolean shouldLimit(@LimitFlag int limits, @LimitFlag int flag) {
+        return (limits & flag) != LIMIT_NONE;
     }
 
     /**
@@ -101,11 +94,11 @@ public class DefaultZoomableController
     }
 
     /**
-     * Sets the zoomable listener.
+     * Gets whether the controller is enabled or not.
      */
     @Override
-    public void setListener(Listener listener) {
-        mListener = listener;
+    public boolean isEnabled() {
+        return mIsEnabled;
     }
 
     /**
@@ -120,11 +113,10 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets whether the controller is enabled or not.
+     * Gets whether the rotation gesture is enabled or not.
      */
-    @Override
-    public boolean isEnabled() {
-        return mIsEnabled;
+    public boolean isRotationEnabled() {
+        return mIsRotationEnabled;
     }
 
     /**
@@ -135,10 +127,10 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets whether the rotation gesture is enabled or not.
+     * Gets whether the scale gesture is enabled or not.
      */
-    public boolean isRotationEnabled() {
-        return mIsRotationEnabled;
+    public boolean isScaleEnabled() {
+        return mIsScaleEnabled;
     }
 
     /**
@@ -149,10 +141,10 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets whether the scale gesture is enabled or not.
+     * Gets whether the translations gesture is enabled or not.
      */
-    public boolean isScaleEnabled() {
-        return mIsScaleEnabled;
+    public boolean isTranslationEnabled() {
+        return mIsTranslationEnabled;
     }
 
     /**
@@ -163,10 +155,10 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets whether the translations gesture is enabled or not.
+     * Gets the minimum scale factor allowed.
      */
-    public boolean isTranslationEnabled() {
-        return mIsTranslationEnabled;
+    public float getMinScaleFactor() {
+        return mMinScaleFactor;
     }
 
     /**
@@ -178,10 +170,10 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets the minimum scale factor allowed.
+     * Gets the maximum scale factor allowed.
      */
-    public float getMinScaleFactor() {
-        return mMinScaleFactor;
+    public float getMaxScaleFactor() {
+        return mMaxScaleFactor;
     }
 
     /**
@@ -193,18 +185,18 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets the maximum scale factor allowed.
-     */
-    public float getMaxScaleFactor() {
-        return mMaxScaleFactor;
-    }
-
-    /**
      * Gets the current scale factor.
      */
     @Override
     public float getScaleFactor() {
         return getMatrixScaleFactor(mActiveTransform);
+    }
+
+    /**
+     * Gets the non-transformed image bounds, in view-absolute coordinates.
+     */
+    public RectF getImageBounds() {
+        return mImageBounds;
     }
 
     /**
@@ -219,17 +211,17 @@ public class DefaultZoomableController
     }
 
     /**
-     * Gets the non-transformed image bounds, in view-absolute coordinates.
-     */
-    public RectF getImageBounds() {
-        return mImageBounds;
-    }
-
-    /**
      * Gets the transformed image bounds, in view-absolute coordinates
      */
     private RectF getTransformedImageBounds() {
         return mTransformedImageBounds;
+    }
+
+    /**
+     * Gets the view bounds.
+     */
+    public RectF getViewBounds() {
+        return mViewBounds;
     }
 
     /**
@@ -238,13 +230,6 @@ public class DefaultZoomableController
     @Override
     public void setViewBounds(RectF viewBounds) {
         mViewBounds.set(viewBounds);
-    }
-
-    /**
-     * Gets the view bounds.
-     */
-    public RectF getViewBounds() {
-        return mViewBounds;
     }
 
     /**
@@ -275,6 +260,15 @@ public class DefaultZoomableController
     @Override
     public Matrix getTransform() {
         return mActiveTransform;
+    }
+
+    /**
+     * Sets a new zoom transformation.
+     */
+    public void setTransform(Matrix newTransform) {
+        FLog.v(TAG, "setTransform");
+        mActiveTransform.set(newTransform);
+        onTransformChanged();
     }
 
     /**
@@ -390,15 +384,6 @@ public class DefaultZoomableController
     }
 
     /**
-     * Sets a new zoom transformation.
-     */
-    public void setTransform(Matrix newTransform) {
-        FLog.v(TAG, "setTransform");
-        mActiveTransform.set(newTransform);
-        onTransformChanged();
-    }
-
-    /**
      * Gets the gesture detector.
      */
     protected TransformGestureDetector getDetector() {
@@ -417,8 +402,6 @@ public class DefaultZoomableController
         return false;
     }
 
-    /* TransformGestureDetector.Listener methods  */
-
     @Override
     public void onGestureBegin(TransformGestureDetector detector) {
         FLog.v(TAG, "onGestureBegin");
@@ -430,6 +413,8 @@ public class DefaultZoomableController
         // transformation to be corrected.
         mWasTransformCorrected = !canScrollInAllDirection();
     }
+
+    /* TransformGestureDetector.Listener methods  */
 
     @Override
     public void onGestureUpdate(TransformGestureDetector detector) {
@@ -553,20 +538,6 @@ public class DefaultZoomableController
     }
 
     /**
-     * Checks whether the specified limit flag is present in the limits provided.
-     *
-     * <p> If the flag contains multiple flags together using a bitwise OR, this only checks that at
-     * least one of the flags is included.
-     *
-     * @param limits the limits to apply
-     * @param flag   the limit flag(s) to check for
-     * @return true if the flag (or one of the flags) is included in the limits
-     */
-    private static boolean shouldLimit(@LimitFlag int limits, @LimitFlag int flag) {
-        return (limits & flag) != LIMIT_NONE;
-    }
-
-    /**
      * Returns the offset necessary to make sure that:
      * - the image is centered within the limit if the image is smaller than the limit
      * - there is no empty space on left/right if the image is bigger than the limit
@@ -683,5 +654,24 @@ public class DefaultZoomableController
 
     public Listener getListener() {
         return mListener;
+    }
+
+    /**
+     * Sets the zoomable listener.
+     */
+    @Override
+    public void setListener(Listener listener) {
+        mListener = listener;
+    }
+
+    @IntDef(flag = true, value = {
+            LIMIT_NONE,
+            LIMIT_TRANSLATION_X,
+            LIMIT_TRANSLATION_Y,
+            LIMIT_SCALE,
+            LIMIT_ALL
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LimitFlag {
     }
 }

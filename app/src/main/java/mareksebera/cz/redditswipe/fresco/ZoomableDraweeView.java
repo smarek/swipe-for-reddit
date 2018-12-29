@@ -50,30 +50,9 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
 
     private final RectF mImageBounds = new RectF();
     private final RectF mViewBounds = new RectF();
-
+    private final GestureListenerWrapper mTapListenerWrapper = new GestureListenerWrapper();
     private DraweeController mHugeImageController;
     private ZoomableController mZoomableController;
-    private GestureDetector mTapGestureDetector;
-    private boolean mAllowTouchInterceptionWhileZoomed = true;
-
-    private boolean mIsDialtoneEnabled = false;
-    private boolean mZoomingEnabled = true;
-
-    private final ControllerListener mControllerListener = new BaseControllerListener<Object>() {
-        @Override
-        public void onFinalImageSet(
-                String id,
-                @Nullable Object imageInfo,
-                @Nullable Animatable animatable) {
-            ZoomableDraweeView.this.onFinalImageSet();
-        }
-
-        @Override
-        public void onRelease(String id) {
-            ZoomableDraweeView.this.onRelease();
-        }
-    };
-
     private final ZoomableController.Listener mZoomableListener =
             new ZoomableController.Listener() {
                 @Override
@@ -89,8 +68,24 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
                 public void onTransformEnd(Matrix transform) {
                 }
             };
+    private GestureDetector mTapGestureDetector;
+    private boolean mAllowTouchInterceptionWhileZoomed = true;
+    private boolean mIsDialtoneEnabled = false;
+    private boolean mZoomingEnabled = true;
+    private final ControllerListener mControllerListener = new BaseControllerListener<Object>() {
+        @Override
+        public void onFinalImageSet(
+                String id,
+                @Nullable Object imageInfo,
+                @Nullable Animatable animatable) {
+            ZoomableDraweeView.this.onFinalImageSet();
+        }
 
-    private final GestureListenerWrapper mTapListenerWrapper = new GestureListenerWrapper();
+        @Override
+        public void onRelease(String id) {
+            ZoomableDraweeView.this.onRelease();
+        }
+    };
 
     public ZoomableDraweeView(Context context, GenericDraweeHierarchy hierarchy) {
         super(context);
@@ -166,16 +161,6 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
     }
 
     /**
-     * Sets a custom zoomable controller, instead of using the default one.
-     */
-    public void setZoomableController(ZoomableController zoomableController) {
-        Preconditions.checkNotNull(zoomableController);
-        mZoomableController.setListener(null);
-        mZoomableController = zoomableController;
-        mZoomableController.setListener(mZoomableListener);
-    }
-
-    /**
      * Gets the zoomable controller.
      *
      * <p> Zoomable controller can be used to zoom to point, or to map point from view to image
@@ -183,6 +168,16 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
      */
     public ZoomableController getZoomableController() {
         return mZoomableController;
+    }
+
+    /**
+     * Sets a custom zoomable controller, instead of using the default one.
+     */
+    public void setZoomableController(ZoomableController zoomableController) {
+        Preconditions.checkNotNull(zoomableController);
+        mZoomableController.setListener(null);
+        mZoomableController = zoomableController;
+        mZoomableController.setListener(mZoomableListener);
     }
 
     /**

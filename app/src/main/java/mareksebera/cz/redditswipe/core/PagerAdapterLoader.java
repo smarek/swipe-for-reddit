@@ -11,12 +11,6 @@ import mareksebera.cz.redditswipe.immutables.ImmutableGeneralListing;
 
 public class PagerAdapterLoader {
 
-    public interface LoaderCallback {
-        void success(@NonNull ImmutableGeneralListing response);
-
-        void failure(@NonNull VolleyError error);
-    }
-
     public void loadMore(Context ctx, String url, String after, final LoaderCallback callback) {
         url = Uri.parse(url).buildUpon().clearQuery().appendQueryParameter("after", after).build().toString();
 
@@ -36,6 +30,12 @@ public class PagerAdapterLoader {
                 }
             }
         });
+    }
+
+    public interface LoaderCallback {
+        void success(@NonNull ImmutableGeneralListing response);
+
+        void failure(@NonNull VolleyError error);
     }
 
 }

@@ -13,6 +13,7 @@ public enum RedditItemType {
     TYPE_IMAGE,
     TYPE_VIDEO,
     TYPE_TEXT,
+    TYPE_LINK,
     TYPE_IMAGE_ALBUM;
 
     public static RedditItemType classify(ImmutableGeneralListingItem item) {
@@ -26,8 +27,8 @@ public enum RedditItemType {
         if (isSelfText(item)) {
             return TYPE_TEXT;
         }
-        if (isVideo(uri)) {
-            return TYPE_VIDEO;
+        if (isYoutubeVideo(uri)) {
+            return TYPE_LINK;
         }
         if (isGif(uri)) {
             return TYPE_VIDEO;
@@ -58,7 +59,7 @@ public enum RedditItemType {
             boolean pathIndicator = path.endsWith(".gif") || path.endsWith(
                     ".webm") || path.endsWith(".mp4");
 
-            return (hostContains(host, "gfycat.com") && pathIndicator) || hostContains(host, "v.redd.it") || (
+            return (hostContains(host, "gfycat.com") && pathIndicator) || (hostContains(host, "v.redd.it") && pathIndicator) || (
                     hostContains(host, "imgur.com") && pathIndicator);
 
         } catch (NullPointerException e) {
@@ -83,7 +84,7 @@ public enum RedditItemType {
         }
     }
 
-    public static boolean isVideo(URI uri) {
+    public static boolean isYoutubeVideo(URI uri) {
         try {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);

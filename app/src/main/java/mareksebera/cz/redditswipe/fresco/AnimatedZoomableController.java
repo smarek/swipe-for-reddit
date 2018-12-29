@@ -32,15 +32,15 @@ public class AnimatedZoomableController extends AbstractAnimatedZoomableControll
 
     private final ValueAnimator mValueAnimator;
 
-    public static AnimatedZoomableController newInstance() {
-        return new AnimatedZoomableController(TransformGestureDetector.newInstance());
-    }
-
     @SuppressLint("NewApi")
     public AnimatedZoomableController(TransformGestureDetector transformGestureDetector) {
         super(transformGestureDetector);
         mValueAnimator = ValueAnimator.ofFloat(0, 1);
         mValueAnimator.setInterpolator(new DecelerateInterpolator());
+    }
+
+    public static AnimatedZoomableController newInstance() {
+        return new AnimatedZoomableController(TransformGestureDetector.newInstance());
     }
 
     @SuppressLint("NewApi")

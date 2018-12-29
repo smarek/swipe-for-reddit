@@ -23,12 +23,12 @@ import com.facebook.common.logging.FLog;
  */
 public abstract class AbstractAnimatedZoomableController extends DefaultZoomableController {
 
-    private boolean mIsAnimating;
     private final float[] mStartValues = new float[9];
     private final float[] mStopValues = new float[9];
     private final float[] mCurrentValues = new float[9];
     private final Matrix mNewTransform = new Matrix();
     private final Matrix mWorkingTransform = new Matrix();
+    private boolean mIsAnimating;
 
 
     public AbstractAnimatedZoomableController(TransformGestureDetector transformGestureDetector) {

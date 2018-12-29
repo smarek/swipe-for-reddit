@@ -13,11 +13,23 @@ import java.io.Serializable;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableGeneralListingItemData.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public interface GeneralListingItemData  extends Serializable {
+public interface GeneralListingItemData extends Serializable {
     String getSubreddit();
 
     String getTitle();
 
+    @Nullable
+    @JsonProperty("selftext")
+    String getSelftext();
+
+    @Nullable
+    @JsonProperty("selftext_html")
+    String getSelftextHtml();
+
+    @JsonProperty(value = "is_self")
+    boolean getIsSelf();
+
+    @Nullable
     String getThumbnail();
 
     String getAuthor();

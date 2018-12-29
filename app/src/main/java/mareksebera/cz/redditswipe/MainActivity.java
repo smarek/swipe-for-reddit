@@ -35,7 +35,12 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         }
 
-        mViewPagerAdapter = new SwipeViewPagerAdapter(this, getSupportFragmentManager(), "https://www.reddit.com/r/funny+gifs+videos+all.json");
+        mViewPagerAdapter = new SwipeViewPagerAdapter(
+                this,
+                getSupportFragmentManager(),
+                "https://reddit.com/r/JackAndJill+jillingcumsluts+Hecumsshecums+Amateur+Blowjobs+creampies+cumsluts+doublepenetration+dirtysmall+facesitting+NSFW_GIF+nsfw_gifs+GirlsFinishingTheJob+nsfwhardcore+omgbeckylookathiscock+porn_gifs+pornvids+asslick+choking+throatpies+spanking+HappyEmbarrassedGirls+RealGirls+AsiansGoneWild+SheLikesItRough+cfnm+LovingFamily+2for1.json"
+//                "https://www.reddit.com/r/funny+gifs+videos+all+nsfw+gonewildaudio+gonewild+jokes+cybersecurity+czech+economy+EOD+europe+geopolitics.json"
+        );
         mViewPager.setAdapter(mViewPagerAdapter);
 
     }

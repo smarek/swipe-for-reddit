@@ -1,5 +1,7 @@
 package mareksebera.cz.redditswipe.immutables;
 
+import android.support.annotation.NonNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,8 +13,10 @@ import java.io.Serializable;
 @JsonDeserialize(as = ImmutableGeneralListing.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface GeneralListing extends Serializable {
+    @NonNull
     String getKind();
 
+    @NonNull
     ImmutableGeneralData getData();
 
     class Builder extends ImmutableGeneralListing.Builder {

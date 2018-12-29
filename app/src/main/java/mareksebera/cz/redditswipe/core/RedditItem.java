@@ -1,7 +1,6 @@
 package mareksebera.cz.redditswipe.core;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.Serializable;
 
@@ -18,7 +17,16 @@ public class RedditItem implements Serializable {
 
     public RedditItem() {
         TYPE = RedditItemType.TYPE_DUMMY;
-        DATA = new GeneralListingItemData.Builder().author("DUMMY").thumbnail("DUMMY").subreddit("DUMMY").title("DUMY").url("DUMMY").isVideo(false).postHint("t39").build();
+        DATA = new GeneralListingItemData.Builder()
+                .author("DUMMY")
+                .thumbnail("DUMMY")
+                .subreddit("DUMMY")
+                .title("DUMY")
+                .url("DUMMY")
+                .isVideo(false)
+                .postHint("t39")
+                .isSelf(false)
+                .build();
     }
 
     public RedditItem(@NonNull RedditItemType type, @NonNull ImmutableGeneralListingItemData data) {
@@ -32,13 +40,7 @@ public class RedditItem implements Serializable {
 
     @NonNull
     private static RedditItemType detectType(ImmutableGeneralListingItem immutableGeneralListingItem) {
-        RedditItemType rit = RedditItemType.TYPE_DUMMY;
-        if (immutableGeneralListingItem.getData().getIsVideo() || immutableGeneralListingItem.getData().getUrl().endsWith(".gifv")) {
-            rit = RedditItemType.TYPE_VIDEO;
-        } else if ("image".equals(immutableGeneralListingItem.getData().getPostHint())) {
-            rit = RedditItemType.TYPE_IMAGE;
-        }
-        return rit;
+        return RedditItemType.classify(immutableGeneralListingItem);
     }
 
     public static String getImageVideoUrl(String url) {

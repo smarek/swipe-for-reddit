@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
@@ -25,12 +24,9 @@ public class PagerAdapterLoader {
     }
 
     public void load(Context ctx, String url, final LoaderCallback callback) {
-        Volley.newRequestQueue(ctx).add(new VolleyJacksonRequest<ImmutableGeneralListing>(url, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (callback != null) {
-                    callback.failure(error);
-                }
+        Volley.newRequestQueue(ctx).add(new VolleyJacksonRequest<ImmutableGeneralListing>(url, error -> {
+            if (callback != null) {
+                callback.failure(error);
             }
         }, ImmutableGeneralListing.class) {
             @Override

@@ -8,13 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.toolbox.Volley;
 import com.devbrackets.android.exomedia.listener.OnPreparedListener;
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 
+import java.net.URI;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import mareksebera.cz.redditswipe.R;
 import mareksebera.cz.redditswipe.core.RedditItem;
-import mareksebera.cz.redditswipe.immutables.ImmutableItemDataMediaVideo;
+import mareksebera.cz.redditswipe.core.RedditItemType;
+import mareksebera.cz.redditswipe.core.UrlUtils;
+import mareksebera.cz.redditswipe.core.VolleyJacksonRequest;
+import mareksebera.cz.redditswipe.immutables.ImmutableGfycatBase;
 
 public class VideoItemFragment extends CommonItemFragment implements OnPreparedListener {
 
@@ -45,27 +53,39 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
             videoView.setOnPreparedListener(this);
 
             String url = RedditItem.getImageVideoUrl(item.DATA.getUrl());
+            URI uri = URI.create(url);
 
-            Log.d("VideoItemFragment", String.format("url:%s, media:%b reddit_video:%b", item.DATA.getUrl(), item.DATA.getMedia() == null, item.DATA.getSecureMedia() == null));
-            if ((item.DATA.getMedia() != null && item.DATA.getMedia().getRedditVideo() != null) || (item.DATA.getSecureMedia() != null && item.DATA.getSecureMedia().getRedditVideo() != null)) {
-                ImmutableItemDataMediaVideo iidmv = item.DATA.getMedia() == null ? item.DATA.getSecureMedia().getRedditVideo() : item.DATA.getMedia().getRedditVideo();
-                if (iidmv == null) {
-                    Log.e("VideoItemFragment", "iidmv null, fackup");
-                } else {
-                    if (null != iidmv.getDashUrl()) {
-                        url = iidmv.getDashUrl();
-                    } else if (iidmv.getHlsUrl() != null) {
-                        url = iidmv.getHlsUrl();
-                    } else if (iidmv.getFallbackUrl() != null) {
-                        url = iidmv.getFallbackUrl();
-                    }
+            if (!RedditItemType.isGifLoadInstantly(uri)) {
+
+                if (RedditItemType.isGfycat(uri)) {
+                    Log.d("loadVideo", "loading GFYCAT");
+                    loadGfycat();
+                    return;
                 }
+
+                url = UrlUtils.extractRedditMediaUrl(item);
             }
             Log.d("VideoItemFragment", String.format("final chosen url: %s", url));
             videoView.setVideoPath(url);
         }
 
         Log.d("VideoItemFragment", String.format("loadVideo isUSerVisible:%b", isUserVisible));
+    }
+
+    protected void loadGfycat() {
+        String gfycatApiUrl = item.DATA.getUrl();
+        Pattern p = Pattern.compile(".*gfycat.com\\/(gifs\\/detail\\/)?(\\w+)");
+        Matcher m = p.matcher(gfycatApiUrl);
+        if (m.matches()) {
+            gfycatApiUrl = "https://api.gfycat.com/v1/gfycats/" + m.group(2);
+        }
+        Volley.newRequestQueue(getContext()).add(new VolleyJacksonRequest<ImmutableGfycatBase>(gfycatApiUrl, error -> Log.d("loadGfycat", "error", error), ImmutableGfycatBase.class) {
+            @Override
+            protected void deliverResponse(ImmutableGfycatBase response) {
+                Log.d("loadGfycat", "response: " + response.getGfyItem().getMP4Url());
+                videoView.setVideoPath(response.getGfyItem().getMP4Url());
+            }
+        });
     }
 
     @Override

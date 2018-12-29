@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+
 import mareksebera.cz.redditswipe.R;
 import mareksebera.cz.redditswipe.core.RedditItem;
 
@@ -19,6 +21,7 @@ public abstract class CommonItemFragment extends Fragment {
 
     TextView type, subreddit, title, author, url, dummy_url;
     RedditItem item;
+    SimpleDraweeView dummy_thumbnail;
     boolean isUserVisible = false;
 
     @Override
@@ -39,6 +42,7 @@ public abstract class CommonItemFragment extends Fragment {
         url = v.findViewById(R.id.common_fragment_url);
 
         dummy_url = v.findViewById(R.id.dummy_fragment_url);
+        dummy_thumbnail = v.findViewById(R.id.dummy_fragment_thumbnail);
 
         if (item != null) {
             type.setText(item.TYPE.toString());
@@ -49,6 +53,10 @@ public abstract class CommonItemFragment extends Fragment {
 
             if (dummy_url != null) {
                 dummy_url.setText(item.DATA.getUrl());
+            }
+
+            if (dummy_thumbnail != null && item.DATA.getThumbnail() != null) {
+                dummy_thumbnail.setImageURI(item.DATA.getThumbnail());
             }
 
             Log.d("CommonItemFragment", String.format("format:%s, url:%s", item.TYPE.toString(), item.DATA.getUrl()));

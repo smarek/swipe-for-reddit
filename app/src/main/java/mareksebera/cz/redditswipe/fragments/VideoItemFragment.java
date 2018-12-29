@@ -1,6 +1,5 @@
 package mareksebera.cz.redditswipe.fragments;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,32 +27,54 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
 
         videoView = v.findViewById(R.id.video_fragment_video);
 
-        if (videoView != null && item != null) {
-            videoView.setOnPreparedListener(this);
-
-            String url = RedditItem.getImageVideoUrl(item.DATA.getUrl());
-
-            if (item.DATA.getMedia().isPresent() && item.DATA.getMedia().get().getRedditVideo().isPresent()) {
-                ImmutableItemDataMediaVideo iidmv = item.DATA.getMedia().get().getRedditVideo().get();
-                if (iidmv.getDashUrl() != null) {
-                    url = iidmv.getDashUrl();
-                } else if (iidmv.getHlsUrl() != null) {
-                    url = iidmv.getHlsUrl();
-                } else if (iidmv.getFallbackUrl() != null) {
-                    url = iidmv.getFallbackUrl();
-                }
-            }
-            Log.d("VideoItemFragment", String.format("final chosen url: %s", url));
-            videoView.setPreviewImage(Uri.parse(item.DATA.getThumbnail()));
-            videoView.setVideoPath(url);
-        }
+        loadVideo();
 
         return v;
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            loadVideo();
+        }
+    }
+
+    protected void loadVideo() {
+        if (isUserVisible && videoView != null && item != null) {
+            videoView.setOnPreparedListener(this);
+
+            String url = RedditItem.getImageVideoUrl(item.DATA.getUrl());
+
+            Log.d("VideoItemFragment", String.format("url:%s, media:%b reddit_video:%b", item.DATA.getUrl(), item.DATA.getMedia() == null, item.DATA.getSecureMedia() == null));
+            if ((item.DATA.getMedia() != null && item.DATA.getMedia().getRedditVideo() != null) || (item.DATA.getSecureMedia() != null && item.DATA.getSecureMedia().getRedditVideo() != null)) {
+                ImmutableItemDataMediaVideo iidmv = item.DATA.getMedia() == null ? item.DATA.getSecureMedia().getRedditVideo() : item.DATA.getMedia().getRedditVideo();
+                if (iidmv == null) {
+                    Log.e("VideoItemFragment", "iidmv null, fackup");
+                } else {
+                    if (null != iidmv.getDashUrl()) {
+                        url = iidmv.getDashUrl();
+                    } else if (iidmv.getHlsUrl() != null) {
+                        url = iidmv.getHlsUrl();
+                    } else if (iidmv.getFallbackUrl() != null) {
+                        url = iidmv.getFallbackUrl();
+                    }
+                }
+            }
+            Log.d("VideoItemFragment", String.format("final chosen url: %s", url));
+            videoView.setVideoPath(url);
+        }
+
+        Log.d("VideoItemFragment", String.format("loadVideo isUSerVisible:%b", isUserVisible));
+    }
+
+    @Override
     public void onPrepared() {
         videoView.setRepeatMode(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
-        videoView.start();
+        if (isUserVisible) {
+            videoView.start();
+        } else {
+            Log.d("VideoItemFragment", "not starting video");
+        }
     }
 }

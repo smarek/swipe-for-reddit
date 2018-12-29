@@ -1,17 +1,19 @@
 package mareksebera.cz.redditswipe.immutables;
 
+import android.support.annotation.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.immutables.value.Value;
 
-import java.util.Optional;
+import java.io.Serializable;
 
 @Value.Immutable
 @JsonDeserialize(as = ImmutableGeneralListingItemData.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public interface GeneralListingItemData {
+public interface GeneralListingItemData  extends Serializable {
     String getSubreddit();
 
     String getTitle();
@@ -23,12 +25,20 @@ public interface GeneralListingItemData {
     String getUrl();
 
     @JsonProperty(value = "is_video", defaultValue = "false")
+    @Nullable
     Boolean getIsVideo();
 
     @JsonProperty(value = "post_hint")
+    @Nullable
     String getPostHint();
 
-    Optional<ImmutableItemDataMedia> getMedia();
+    @JsonProperty(value = "media")
+    @Nullable
+    ImmutableItemDataMedia getMedia();
+
+    @JsonProperty(value = "secure_media")
+    @Nullable
+    ImmutableItemDataMedia getSecureMedia();
 
     class Builder extends ImmutableGeneralListingItemData.Builder {
     }

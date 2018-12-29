@@ -19,6 +19,13 @@ public abstract class CommonItemFragment extends Fragment {
 
     TextView type, subreddit, title, author, url, dummy_url;
     RedditItem item;
+    boolean isUserVisible = false;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        isUserVisible = isVisibleToUser;
+    }
 
     @Nullable
     @Override

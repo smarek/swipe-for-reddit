@@ -7,12 +7,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.immutables.value.Value;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Value.Immutable
 @JsonDeserialize(as = ImmutableGeneralData.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public interface GeneralData {
+public interface GeneralData extends Serializable {
     String getModhash();
 
     int getDist();

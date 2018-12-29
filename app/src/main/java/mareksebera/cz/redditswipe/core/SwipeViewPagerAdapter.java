@@ -39,8 +39,8 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
             public void success(@NonNull ImmutableGeneralListing response) {
                 loaded = true;
                 SwipeViewPagerAdapter.this.items.addAll(response.getData().getChildren());
-                SwipeViewPagerAdapter.this.lastResponse = response;
                 SwipeViewPagerAdapter.this.notifyDataSetChanged();
+                SwipeViewPagerAdapter.this.lastResponse = response;
             }
 
             @Override
@@ -67,8 +67,8 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
             @Override
             public void success(@NonNull ImmutableGeneralListing response) {
                 SwipeViewPagerAdapter.this.items.addAll(response.getData().getChildren());
-                SwipeViewPagerAdapter.this.lastResponse = response;
                 SwipeViewPagerAdapter.this.notifyDataSetChanged();
+                SwipeViewPagerAdapter.this.lastResponse = response;
             }
 
             @Override
@@ -81,7 +81,7 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        Log.d("PagerAdapter", "notifyDataSetChanged, new count " + items.size());
+        Log.d("PagerAdapter", "notifyDataSetChanged, new count " + items.size() + ", after: " + (lastResponse != null ? lastResponse.getData().getAfter() : ""));
     }
 
     @Override

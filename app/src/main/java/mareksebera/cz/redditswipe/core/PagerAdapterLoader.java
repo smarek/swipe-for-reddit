@@ -7,14 +7,24 @@ import android.support.annotation.NonNull;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mareksebera.cz.redditswipe.immutables.ImmutableGeneralListing;
 
 public class PagerAdapterLoader {
 
-    public void loadMore(Context ctx, String url, String after, final LoaderCallback callback) {
-        url = Uri.parse(url).buildUpon().clearQuery().appendQueryParameter("after", after).build().toString();
+    private final List<String> loadedAfters = new ArrayList<>();
 
-        load(ctx, url, callback);
+    public void loadMore(Context ctx, String url, String after, final LoaderCallback callback) {
+        synchronized (loadedAfters) {
+            if (loadedAfters.contains(after))
+                return;
+            loadedAfters.add(after);
+
+            url = Uri.parse(url).buildUpon().clearQuery().appendQueryParameter("after", after).build().toString();
+            load(ctx, url, callback);
+        }
     }
 
     public void load(Context ctx, String url, final LoaderCallback callback) {

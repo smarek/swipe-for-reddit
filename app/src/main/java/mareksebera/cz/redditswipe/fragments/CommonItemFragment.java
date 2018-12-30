@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
@@ -114,7 +115,8 @@ public abstract class CommonItemFragment extends Fragment {
                 startActivity(browserIntent);
                 return true;
             case MENU_ITEM_OPEN_COMMENTS:
-
+                CommentsFragment f = CommentsFragment.newInstance(item);
+                f.show(getChildFragmentManager(), f.getTag());
                 return true;
         }
         return super.onOptionsItemSelected(menuItem);

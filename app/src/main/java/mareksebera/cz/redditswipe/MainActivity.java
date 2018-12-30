@@ -4,7 +4,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,12 +16,24 @@ import android.view.MenuItem;
 import android.view.View;
 
 import mareksebera.cz.redditswipe.core.SwipeViewPagerAdapter;
-import mareksebera.cz.redditswipe.fragments.CommentsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private final int MENU_ITEM_FULLSCREEN = 1;
     private boolean isFullscreen = true;
+    private DrawerLayout mDrawerLayout;
+    private Menu mSideMenu;
+
+    NavigationView.OnNavigationItemSelectedListener sideMenuItemSelectedListener = menuItem -> {
+        switch (menuItem.getItemId()) {
+            case MENU_ITEM_FULLSCREEN:
+                toggleFullscreen(MainActivity.this, isFullscreen);
+                isFullscreen = !isFullscreen;
+                return true;
+
+        }
+        return false;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager mViewPager = findViewById(R.id.viewpager);
         NavigationView mNavigationView = findViewById(R.id.nav_view);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,35 +61,22 @@ public class MainActivity extends AppCompatActivity {
         );
         mViewPager.setAdapter(mViewPagerAdapter);
 
-        Menu mSideMenu = mNavigationView.getMenu();
+        mNavigationView.setNavigationItemSelectedListener(sideMenuItemSelectedListener);
+        mSideMenu = mNavigationView.getMenu();
         mSideMenu.clear();
+        createSideMenu();
     }
 
-    public void openCommentsFragment() {
-        CommentsFragment commentsFragment = new CommentsFragment();
-        commentsFragment.show(getSupportFragmentManager(), commentsFragment.getTag());
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (menu.findItem(MENU_ITEM_FULLSCREEN) == null) {
-            menu.add(Menu.NONE, MENU_ITEM_FULLSCREEN, Menu.NONE, "Toggle fullscreen")
-                    .setIcon(R.drawable.ic_fullscreen)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
-        return super.onPrepareOptionsMenu(menu);
+    private void createSideMenu() {
+        mSideMenu.add(Menu.NONE, MENU_ITEM_FULLSCREEN, Menu.NONE, "Toggle fullscreen")
+                .setIcon(R.drawable.ic_fullscreen);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                openCommentsFragment();
-                //mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-            case MENU_ITEM_FULLSCREEN:
-                toggleFullscreen(this, isFullscreen);
-                isFullscreen = !isFullscreen;
+                mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Swipe for Reddit</string>
+    <string name="github_link">https://github.com/smarek/reddit-swipe</string>
 </resources>

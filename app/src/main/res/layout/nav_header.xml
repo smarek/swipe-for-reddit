@@ -27,9 +27,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
-        android:text="github.com/smarek/reddit-swipe"
+        android:text="@string/github_link"
         android:textColor="#ffffff"
         android:textColorLink="#ffffff"
-        android:textSize="14sp" />
+        android:textSize="12sp" />
 
 </LinearLayout>

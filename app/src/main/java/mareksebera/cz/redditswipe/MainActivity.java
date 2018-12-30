@@ -1,27 +1,37 @@
 package mareksebera.cz.redditswipe;
 
+import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import mareksebera.cz.redditswipe.core.SwipeViewPagerAdapter;
+import mareksebera.cz.redditswipe.fragments.CommentsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
+    private FrameLayout fragmentOverlayLayout;
     private FragmentStatePagerAdapter mViewPagerAdapter;
+    private final int MENU_ITEM_FULLSCREEN = 1;
+    private boolean isFullscreen = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(null);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mViewPager = findViewById(R.id.viewpager);
@@ -44,13 +54,92 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void openCommentsFragment() {
+        CommentsFragment commentsFragment = new CommentsFragment();
+        commentsFragment.show(getSupportFragmentManager(), commentsFragment.getTag());
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (menu.findItem(MENU_ITEM_FULLSCREEN) == null) {
+            menu.add(Menu.NONE, MENU_ITEM_FULLSCREEN, Menu.NONE, "Toggle fullscreen")
+                    .setIcon(R.drawable.ic_fullscreen)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                openCommentsFragment();
+                //mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case MENU_ITEM_FULLSCREEN:
+                toggleFullscreen(this, isFullscreen);
+                isFullscreen = !isFullscreen;
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * toggles fullscreen mode
+     * <br/>
+     * REQUIRE: android:configChanges="orientation|screenSize"
+     * <pre>
+     * sample:
+     *     private boolean fullscreen;
+     *     ................
+     *     Activity activity = (Activity)context;
+     *     toggleFullscreen(activity, !fullscreen);
+     *     fullscreen = !fullscreen;
+     * </pre>
+     */
+    private void toggleFullscreen(Activity activity, boolean fullscreen) {
+        // The UI options currently enabled are represented by a bitfield.
+        // getSystemUiVisibility() gives us that bitfield.
+        int uiOptions = activity.getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        boolean isImmersiveModeEnabled =
+                (Build.VERSION.SDK_INT <= 18) && ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        if (isImmersiveModeEnabled) {
+            Log.i(activity.getPackageName(), "Turning immersive mode mode off. ");
+        } else {
+            Log.i(activity.getPackageName(), "Turning immersive mode mode on.");
+        }
+
+        // Navigation bar hiding:  Backwards compatible to ICS.
+        newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+
+        // Status bar hiding: Backwards compatible to Jellybean
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+
+        // Immersive mode: Backward compatible to KitKat.
+        // Note that this flag doesn't do anything by itself, it only augments the behavior
+        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
+        // all three flags are being toggled together.
+        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
+        // Sticky immersive mode differs in that it makes the navigation and status bars
+        // semi-transparent, and the UI flag does not get cleared when the user interacts with
+        // the screen.
+        if (Build.VERSION.SDK_INT > 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        activity.getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+
+
+        try {
+            // hide actionbar
+            if (activity instanceof AppCompatActivity) {
+                if (fullscreen) ((AppCompatActivity) activity).getSupportActionBar().hide();
+                else ((AppCompatActivity) activity).getSupportActionBar().show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

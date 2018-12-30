@@ -30,7 +30,7 @@ public abstract class CommonItemFragment extends Fragment {
     RedditItem item;
     SimpleDraweeView dummy_thumbnail;
     boolean isUserVisible = false;
-    final int MENU_ITEM_OPEN_EXTERNALLY = -1;
+    final int MENU_ITEM_OPEN_EXTERNALLY = -1, MENU_ITEM_OPEN_COMMENTS = -2;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -99,6 +99,11 @@ public abstract class CommonItemFragment extends Fragment {
                     .setIcon(R.drawable.ic_menu_open_in_new)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
+        if (menu.findItem(MENU_ITEM_OPEN_COMMENTS) == null) {
+            menu.add(Menu.NONE, MENU_ITEM_OPEN_COMMENTS, Menu.NONE, "Open Comments")
+                    .setIcon(R.drawable.ic_comments)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
     }
 
     @Override
@@ -107,6 +112,9 @@ public abstract class CommonItemFragment extends Fragment {
             case MENU_ITEM_OPEN_EXTERNALLY:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.DATA.getUrl()));
                 startActivity(browserIntent);
+                return true;
+            case MENU_ITEM_OPEN_COMMENTS:
+
                 return true;
         }
         return super.onOptionsItemSelected(menuItem);

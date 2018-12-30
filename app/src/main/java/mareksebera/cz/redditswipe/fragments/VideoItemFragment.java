@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import mareksebera.cz.redditswipe.immutables.ImmutableGfycatBase;
 public class VideoItemFragment extends CommonItemFragment implements OnPreparedListener {
 
     VideoView videoView;
+    boolean isVideoPrepared = false;
 
     @Nullable
     @Override
@@ -40,6 +40,22 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
         loadVideo();
 
         return v;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (videoView != null) {
+            videoView.stopPlayback();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isUserVisible && isVideoPrepared && videoView != null) {
+            videoView.start();
+        }
     }
 
     @Override
@@ -96,6 +112,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
 
     @Override
     public void onPrepared() {
+        this.isVideoPrepared = true;
         if (isUserVisible) {
             if (videoView != null) {
                 videoView.start();

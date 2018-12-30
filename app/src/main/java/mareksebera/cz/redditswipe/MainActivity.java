@@ -1,11 +1,10 @@
 package mareksebera.cz.redditswipe;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,17 +12,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import mareksebera.cz.redditswipe.core.SwipeViewPagerAdapter;
 import mareksebera.cz.redditswipe.fragments.CommentsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
-    private ViewPager mViewPager;
-    private FrameLayout fragmentOverlayLayout;
-    private FragmentStatePagerAdapter mViewPagerAdapter;
     private final int MENU_ITEM_FULLSCREEN = 1;
     private boolean isFullscreen = true;
 
@@ -33,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(null);
 
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mViewPager = findViewById(R.id.viewpager);
+        ViewPager mViewPager = findViewById(R.id.viewpager);
+        NavigationView mNavigationView = findViewById(R.id.nav_view);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         }
 
-        mViewPagerAdapter = new SwipeViewPagerAdapter(
+        FragmentStatePagerAdapter mViewPagerAdapter = new SwipeViewPagerAdapter(
                 this,
                 getSupportFragmentManager(),
                 "https://reddit.com/r/all.json"
         );
         mViewPager.setAdapter(mViewPagerAdapter);
 
+        Menu mSideMenu = mNavigationView.getMenu();
+        mSideMenu.clear();
     }
 
     public void openCommentsFragment() {
@@ -97,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
      *     fullscreen = !fullscreen;
      * </pre>
      */
-    private void toggleFullscreen(Activity activity, boolean fullscreen) {
+    private void toggleFullscreen(MainActivity activity, boolean fullscreen) {
         // The UI options currently enabled are represented by a bitfield.
         // getSystemUiVisibility() gives us that bitfield.
         int uiOptions = activity.getWindow().getDecorView().getSystemUiVisibility();
@@ -134,9 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // hide actionbar
-            if (activity instanceof AppCompatActivity) {
-                if (fullscreen) ((AppCompatActivity) activity).getSupportActionBar().hide();
-                else ((AppCompatActivity) activity).getSupportActionBar().show();
+            if (fullscreen) {
+                activity.getSupportActionBar().hide();
+            } else {
+                activity.getSupportActionBar().show();
             }
         } catch (Exception e) {
             e.printStackTrace();

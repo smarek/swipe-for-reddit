@@ -1,13 +1,19 @@
 package mareksebera.cz.redditswipe.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -19,10 +25,12 @@ import static mareksebera.cz.redditswipe.core.RedditItemType.TYPE_DUMMY;
 
 public abstract class CommonItemFragment extends Fragment {
 
+    String TAG = "CommonItemFragment";
     TextView type, subreddit, title, author, url, dummy_url;
     RedditItem item;
     SimpleDraweeView dummy_thumbnail;
     boolean isUserVisible = false;
+    final int MENU_ITEM_OPEN_EXTERNALLY = -1;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -44,6 +52,9 @@ public abstract class CommonItemFragment extends Fragment {
         dummy_url = v.findViewById(R.id.dummy_fragment_url);
         dummy_thumbnail = v.findViewById(R.id.dummy_fragment_thumbnail);
 
+        type.setVisibility(View.GONE);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+
         if (item != null) {
             type.setText(item.TYPE.toString());
             subreddit.setText(String.format("r/%s", item.DATA.getSubreddit()));
@@ -55,8 +66,15 @@ public abstract class CommonItemFragment extends Fragment {
                 dummy_url.setText(item.DATA.getUrl());
             }
 
-            if (dummy_thumbnail != null && item.DATA.getThumbnail() != null) {
-                dummy_thumbnail.setImageURI(item.DATA.getThumbnail());
+            if (dummy_thumbnail != null) {
+                if (item.DATA.getPreviewData() != null) {
+                    String url = item.DATA.getPreviewData().getImages().get(0).getSource().getUrl().replaceAll("&amp;", "&");
+                    dummy_thumbnail.setImageURI(url);
+                } else if (item.DATA.getThumbnail() != null && URLUtil.isValidUrl(item.DATA.getThumbnail())) {
+                    dummy_thumbnail.setImageURI(item.DATA.getThumbnail());
+                } else {
+                    dummy_thumbnail.setImageResource(R.drawable.ic_link);
+                }
             }
 
             Log.d("CommonItemFragment", String.format("format:%s, url:%s", item.TYPE.toString(), item.DATA.getUrl()));
@@ -70,5 +88,27 @@ public abstract class CommonItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         item = (RedditItem) args.get("item");
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (menu.findItem(MENU_ITEM_OPEN_EXTERNALLY) == null) {
+            menu.add(Menu.NONE, MENU_ITEM_OPEN_EXTERNALLY, Menu.NONE, "Open externally")
+                    .setIcon(R.drawable.ic_menu_open_in_new)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case MENU_ITEM_OPEN_EXTERNALLY:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.DATA.getUrl()));
+                startActivity(browserIntent);
+                return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 }

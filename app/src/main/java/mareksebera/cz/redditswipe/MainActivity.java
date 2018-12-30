@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPagerAdapter = new SwipeViewPagerAdapter(
                 this,
                 getSupportFragmentManager(),
-                "https://www.reddit.com/r/jokes+gifs.json"
+                "https://reddit.com/r/all.json"
         );
         mViewPager.setAdapter(mViewPagerAdapter);
 

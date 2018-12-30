@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         videoView = v.findViewById(R.id.video_fragment_video);
+        videoView.setRepeatMode(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
 
         loadVideo();
 
@@ -96,7 +98,6 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     public void onPrepared() {
         if (isUserVisible) {
             if (videoView != null) {
-                videoView.setRepeatMode(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
                 videoView.start();
             }
         } else {

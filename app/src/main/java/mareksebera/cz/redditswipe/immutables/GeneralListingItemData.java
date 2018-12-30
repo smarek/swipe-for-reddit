@@ -52,6 +52,10 @@ public interface GeneralListingItemData extends Serializable {
     @Nullable
     ImmutableItemDataMedia getSecureMedia();
 
+    @JsonProperty(value = "preview")
+    @Nullable
+    ImmutablePreviewData getPreviewData();
+
     class Builder extends ImmutableGeneralListingItemData.Builder {
     }
 }

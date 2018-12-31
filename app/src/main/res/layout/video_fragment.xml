@@ -12,6 +12,13 @@
         android:layout_weight="1"
         app:useDefaultControls="true" />
 
+    <TextView
+        android:id="@+id/video_fragment_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
     <include
         layout="@layout/common_fragment"
         android:layout_width="match_parent"

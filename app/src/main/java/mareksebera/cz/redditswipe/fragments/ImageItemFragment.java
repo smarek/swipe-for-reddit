@@ -23,6 +23,7 @@ public class ImageItemFragment extends CommonItemFragment {
         if (drawee != null) {
             drawee.setController(Fresco.newDraweeControllerBuilder()
                     .setUri(item.DATA.getUrl())
+                    .setAutoPlayAnimations(true)
                     .build());
         }
 

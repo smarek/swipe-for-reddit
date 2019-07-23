@@ -31,10 +31,13 @@ public enum RedditItemType {
             return TYPE_LINK;
         }
         if (isGif(uri)) {
-            return TYPE_VIDEO;
+            return TYPE_IMAGE;
         }
         if (isImage(uri)) {
             return TYPE_IMAGE;
+        }
+        if (isVideo(uri)) {
+            return TYPE_VIDEO;
         }
         if (isImageAlbum(uri)) {
             return TYPE_IMAGE_ALBUM;
@@ -72,12 +75,22 @@ public enum RedditItemType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return hostContains(host, "gfycat.com")
-                    || hostContains(host, "v.redd.it")
-                    || path.endsWith(".gif")
-                    || path.endsWith(".gifv")
-                    || path.endsWith(".webm")
-                    || path.endsWith(".mp4");
+            return (hostContains(host, "gfycat.com")
+                    || hostContains(host, "v.redd.it")) &&
+                    path.endsWith(".gif");
+
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+
+    public static boolean isVideo(URI uri) {
+        try {
+            final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
+            final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
+
+            return ((hostContains(host, "gfycat.com") || hostContains(host, "v.redd.it")) && !path.endsWith(".gif"))
+                    || path.endsWith(".mp4") || path.endsWith(".webm") || path.endsWith(".gifv");
 
         } catch (NullPointerException e) {
             return false;

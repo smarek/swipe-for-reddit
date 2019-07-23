@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import mareksebera.cz.redditswipe.R;
 import mareksebera.cz.redditswipe.core.RedditItem;
 import mareksebera.cz.redditswipe.core.RedditItemType;
+import mareksebera.cz.redditswipe.core.SwipeVideoControls;
 import mareksebera.cz.redditswipe.core.UrlUtils;
 import mareksebera.cz.redditswipe.core.VolleyHeadRequest;
 import mareksebera.cz.redditswipe.core.VolleyJacksonRequest;
@@ -37,7 +38,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     boolean isVideoPrepared = false;
     String chosenVideoUrl = null;
     long chosenVideoSize = 0;
-    long maximumVideoSizeAutoLoad = 3145728;
+    long maximumVideoSizeAutoLoad = 314572800;
     Handler callbackHandler = new Handler();
 
     @Nullable
@@ -49,6 +50,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
         videoSize = v.findViewById(R.id.video_fragment_size);
 
         videoView.setRepeatMode(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
+        videoView.setControls(new SwipeVideoControls(v.getContext()));
 
         loadVideo();
 
@@ -96,6 +98,8 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
                     Log.d("loadVideo", "loading GFYCAT");
                     loadGfycat();
                     return;
+                } else {
+                    Log.d(TAG, "Not gfycat");
                 }
 
                 url = UrlUtils.extractRedditMediaUrl(item);
@@ -107,6 +111,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
             } else {
                 videoView.setVideoPath(chosenVideoUrl);
             }
+
         }
 
         Log.d("VideoItemFragment", String.format("loadVideo isUSerVisible:%b", isUserVisible));
@@ -153,12 +158,19 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
 
     protected void loadGfycat() {
         String gfycatApiUrl = item.DATA.getUrl();
-        Pattern p = Pattern.compile(".*gfycat.com\\/(gifs\\/detail\\/)?(\\w+)");
+        Pattern p = Pattern.compile(".*gfycat.com\\/(gifs\\/detail\\/)?([\\w]+).*");
         Matcher m = p.matcher(gfycatApiUrl);
         if (m.matches()) {
             gfycatApiUrl = "https://api.gfycat.com/v1/gfycats/" + m.group(2);
+        } else {
+            Pattern p2 = Pattern.compile(".*thumbs.gfycat.com/([\\w]+)-.*");
+            Matcher m2 = p2.matcher(gfycatApiUrl);
+            if (m2.matches()) {
+                gfycatApiUrl = "https://api.gfycat.com/v1/gfycats/" + m2.group(2);
+            }
         }
-        Volley.newRequestQueue(getContext()).add(new VolleyJacksonRequest<ImmutableGfycatBase>(gfycatApiUrl, error -> Log.d("loadGfycat", "error", error), ImmutableGfycatBase.class) {
+        Log.d(TAG, "gfycat url: " + gfycatApiUrl);
+        Volley.newRequestQueue(requireContext()).add(new VolleyJacksonRequest<ImmutableGfycatBase>(gfycatApiUrl, error -> Log.d("loadGfycat", "error", error), ImmutableGfycatBase.class) {
             @Override
             protected void deliverResponse(ImmutableGfycatBase response) {
                 Log.d("loadGfycat", "response: " + response.getGfyItem().getMP4Url());

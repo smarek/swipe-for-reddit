@@ -14,6 +14,7 @@ public final class UrlUtils {
             if (iidmv == null) {
                 Log.e("UrlUtils.extractReddit", "iidmv null, fackup");
             } else {
+                Log.d("UrlUtils.extractReddit", String.format("%s %s %s",iidmv.getDashUrl(),iidmv.getHlsUrl(),iidmv.getFallbackUrl()));
                 if (null != iidmv.getDashUrl()) {
                     url = iidmv.getDashUrl();
                 } else if (iidmv.getHlsUrl() != null) {

@@ -2,18 +2,20 @@ package mareksebera.cz.redditswipe;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.navigation.NavigationView;
 
 import mareksebera.cz.redditswipe.core.SwipeViewPagerAdapter;
 
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentStatePagerAdapter mViewPagerAdapter = new SwipeViewPagerAdapter(
                 this,
                 getSupportFragmentManager(),
-                "https://reddit.com/r/all.json"
+                "https://www.reddit.com/.json"
         );
         mViewPager.setAdapter(mViewPagerAdapter);
 

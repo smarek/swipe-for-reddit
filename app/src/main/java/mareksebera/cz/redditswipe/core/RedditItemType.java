@@ -1,7 +1,8 @@
 package mareksebera.cz.redditswipe.core;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.net.URI;
 import java.util.Locale;

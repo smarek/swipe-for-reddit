@@ -3,10 +3,10 @@ package mareksebera.cz.redditswipe.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -93,7 +93,7 @@ public abstract class CommonItemFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (menu.findItem(MENU_ITEM_OPEN_EXTERNALLY) == null) {
             menu.add(Menu.NONE, MENU_ITEM_OPEN_EXTERNALLY, Menu.NONE, "Open externally")

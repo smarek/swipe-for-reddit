@@ -2,7 +2,7 @@ package mareksebera.cz.redditswipe.core;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;

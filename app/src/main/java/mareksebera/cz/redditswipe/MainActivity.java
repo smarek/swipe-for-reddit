@@ -25,12 +25,22 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFullscreen = true;
     private DrawerLayout mDrawerLayout;
     private Menu mSideMenu;
+    private ViewPager mViewPager;
 
     NavigationView.OnNavigationItemSelectedListener sideMenuItemSelectedListener = menuItem -> {
         switch (menuItem.getItemId()) {
             case MENU_ITEM_FULLSCREEN:
                 toggleFullscreen(MainActivity.this, isFullscreen);
                 isFullscreen = !isFullscreen;
+                return true;
+            case 1337:
+                setCurrentAdapterUrl("https://www.reddit.com/r/all.json");
+                return true;
+            case 1338:
+                setCurrentAdapterUrl("https://www.reddit.com/r/funny.json");
+                return true;
+            case 1339:
+                setCurrentAdapterUrl("https://www.reddit.com/r/gifs.json");
                 return true;
 
         }
@@ -43,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(null);
 
-        ViewPager mViewPager = findViewById(R.id.viewpager);
+        mViewPager = findViewById(R.id.viewpager);
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
@@ -56,12 +66,7 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         }
 
-        FragmentStatePagerAdapter mViewPagerAdapter = new SwipeViewPagerAdapter(
-                this,
-                getSupportFragmentManager(),
-                "https://www.reddit.com/r/all.json"
-        );
-        mViewPager.setAdapter(mViewPagerAdapter);
+        setCurrentAdapterUrl("https://www.reddit.com/r/all.json");
 
         mNavigationView.setNavigationItemSelectedListener(sideMenuItemSelectedListener);
         mSideMenu = mNavigationView.getMenu();
@@ -69,9 +74,22 @@ public class MainActivity extends AppCompatActivity {
         createSideMenu();
     }
 
+    private void setCurrentAdapterUrl(String url){
+        FragmentStatePagerAdapter mViewPagerAdapter = new SwipeViewPagerAdapter(
+                this,
+                getSupportFragmentManager(),
+                url
+        );
+        mViewPager.setAdapter(mViewPagerAdapter);
+    }
+
     private void createSideMenu() {
         mSideMenu.add(Menu.NONE, MENU_ITEM_FULLSCREEN, Menu.NONE, "Toggle fullscreen")
                 .setIcon(R.drawable.ic_fullscreen);
+
+        mSideMenu.add(Menu.NONE, 1337, Menu.NONE, "r/all");
+        mSideMenu.add(Menu.NONE, 1338, Menu.NONE, "r/funny");
+        mSideMenu.add(Menu.NONE, 1339, Menu.NONE, "r/gifs");
     }
 
     @Override

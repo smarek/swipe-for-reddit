@@ -23,6 +23,11 @@
                 android:textIsSelectable="true"
                 android:textSize="32sp" />
 
+            <io.github.jisung.rigidwebview.RigidWebView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_fragment_webview" />
+
             <TextView
                 android:id="@+id/text_fragment_selftext"
                 android:layout_width="match_parent"

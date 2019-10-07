@@ -30,14 +30,7 @@ public abstract class CommonItemFragment extends Fragment {
     TextView type, subreddit, title, author, url, dummy_url;
     RedditItem item;
     SimpleDraweeView dummy_thumbnail;
-    boolean isUserVisible = false;
     final int MENU_ITEM_OPEN_EXTERNALLY = -1, MENU_ITEM_OPEN_COMMENTS = -2;
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        isUserVisible = isVisibleToUser;
-    }
 
     @Nullable
     @Override

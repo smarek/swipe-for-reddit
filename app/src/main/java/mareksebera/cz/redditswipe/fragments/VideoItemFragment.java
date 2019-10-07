@@ -3,13 +3,14 @@ package mareksebera.cz.redditswipe.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.volley.Header;
 import com.android.volley.toolbox.Volley;
@@ -68,7 +69,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     @Override
     public void onResume() {
         super.onResume();
-        if (isUserVisible && isVideoPrepared && videoView != null) {
+        if (isVideoPrepared && videoView != null) {
             videoView.start();
         }
     }
@@ -86,7 +87,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     }
 
     protected void loadVideo() {
-        if (isUserVisible && videoView != null && item != null) {
+        if (videoView != null && item != null) {
             videoView.setOnPreparedListener(this);
 
             String url = RedditItem.getImageVideoUrl(item.DATA.getUrl());
@@ -113,8 +114,6 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
             }
 
         }
-
-        Log.d("VideoItemFragment", String.format("loadVideo isUSerVisible:%b", isUserVisible));
     }
 
     private void checkVideoSize() {
@@ -182,12 +181,8 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     @Override
     public void onPrepared() {
         this.isVideoPrepared = true;
-        if (isUserVisible) {
-            if (videoView != null) {
-                videoView.start();
-            }
-        } else {
-            Log.d("VideoItemFragment", "not starting video");
+        if (videoView != null) {
+            videoView.start();
         }
     }
 }

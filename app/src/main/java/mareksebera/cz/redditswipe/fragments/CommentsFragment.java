@@ -1,6 +1,7 @@
 package mareksebera.cz.redditswipe.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ public class CommentsFragment extends BottomSheetDialogFragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.comments_fragment, container, false);
+
+        RedditItem item = (RedditItem) getArguments().getSerializable("item");
 
         return v;
     }

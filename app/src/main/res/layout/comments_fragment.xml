@@ -13,6 +13,5 @@
         app:layout_behavior="@string/bottom_sheet_behavior">
 
 
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

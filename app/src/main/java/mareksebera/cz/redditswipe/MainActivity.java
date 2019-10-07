@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentStatePagerAdapter mViewPagerAdapter = new SwipeViewPagerAdapter(
                 this,
                 getSupportFragmentManager(),
-                "https://www.reddit.com/.json"
+                "https://www.reddit.com/r/all.json"
         );
         mViewPager.setAdapter(mViewPagerAdapter);
 

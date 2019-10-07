@@ -34,6 +34,9 @@ public enum RedditItemType {
         if (isGif(uri)) {
             return TYPE_IMAGE;
         }
+        if (isGifLoadInstantly(uri)) {
+            return TYPE_IMAGE;
+        }
         if (isImage(uri)) {
             return TYPE_IMAGE;
         }

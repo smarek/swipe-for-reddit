@@ -3,10 +3,6 @@ package mareksebera.cz.redditswipe.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -29,6 +29,7 @@ public abstract class CommonItemFragment extends Fragment {
     String TAG = "CommonItemFragment";
     TextView type, subreddit, title, author, url, dummy_url;
     RedditItem item;
+    boolean isUserVisible = false;
     SimpleDraweeView dummy_thumbnail;
     final int MENU_ITEM_OPEN_EXTERNALLY = -1, MENU_ITEM_OPEN_COMMENTS = -2;
 
@@ -113,5 +114,17 @@ public abstract class CommonItemFragment extends Fragment {
                 return true;
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUserVisible = true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isUserVisible = false;
     }
 }

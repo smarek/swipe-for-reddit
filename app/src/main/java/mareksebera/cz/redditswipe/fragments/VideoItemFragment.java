@@ -34,13 +34,13 @@ import mareksebera.cz.redditswipe.immutables.ImmutableGfycatBase;
 
 public class VideoItemFragment extends CommonItemFragment implements OnPreparedListener {
 
-    VideoView videoView;
-    TextView videoSize;
-    boolean isVideoPrepared = false;
-    String chosenVideoUrl = null;
-    long chosenVideoSize = 0;
-    long maximumVideoSizeAutoLoad = 314572800;
-    Handler callbackHandler = new Handler();
+    private VideoView videoView;
+    private TextView videoSize;
+    private boolean isVideoPrepared = false;
+    private String chosenVideoUrl = null;
+    private long chosenVideoSize = 0;
+    private long maximumVideoSizeAutoLoad = 314572800;
+    private Handler callbackHandler = new Handler();
 
     @Nullable
     @Override
@@ -62,31 +62,31 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     public void onPause() {
         super.onPause();
         if (videoView != null) {
-            videoView.stopPlayback();
+            videoView.pause();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (isVideoPrepared && videoView != null) {
-            videoView.start();
-        }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            loadVideo();
-        } else {
-            if (videoView != null) {
-                videoView.stopPlayback();
+        if (videoView != null) {
+            if (isVideoPrepared) {
+                videoView.start();
+            } else {
+                loadVideo();
             }
         }
     }
 
-    protected void loadVideo() {
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (videoView != null) {
+            videoView.stopPlayback();
+        }
+    }
+
+    private void loadVideo() {
         if (videoView != null && item != null) {
             videoView.setOnPreparedListener(this);
 
@@ -155,7 +155,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
         return (double) Math.round(value * scale) / scale;
     }
 
-    protected void loadGfycat() {
+    private void loadGfycat() {
         String gfycatApiUrl = item.DATA.getUrl();
         Pattern p = Pattern.compile(".*gfycat.com\\/(gifs\\/detail\\/)?([\\w]+).*");
         Matcher m = p.matcher(gfycatApiUrl);
@@ -181,7 +181,7 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
     @Override
     public void onPrepared() {
         this.isVideoPrepared = true;
-        if (videoView != null) {
+        if (isUserVisible && videoView != null) {
             videoView.start();
         }
     }

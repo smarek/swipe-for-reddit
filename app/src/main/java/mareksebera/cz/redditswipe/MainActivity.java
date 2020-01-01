@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         createSideMenu();
     }
 
-    private void setCurrentAdapterUrl(String url){
+    private void setCurrentAdapterUrl(String url) {
         FragmentStatePagerAdapter mViewPagerAdapter = new SwipeViewPagerAdapter(
                 this,
                 getSupportFragmentManager(),
@@ -120,8 +120,10 @@ public class MainActivity extends AppCompatActivity {
         // getSystemUiVisibility() gives us that bitfield.
         int uiOptions = activity.getWindow().getDecorView().getSystemUiVisibility();
         int newUiOptions = uiOptions;
-        boolean isImmersiveModeEnabled =
-                (Build.VERSION.SDK_INT <= 18) && ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        boolean isImmersiveModeEnabled = false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            isImmersiveModeEnabled = ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        }
         if (isImmersiveModeEnabled) {
             Log.i(activity.getPackageName(), "Turning immersive mode mode off. ");
         } else {

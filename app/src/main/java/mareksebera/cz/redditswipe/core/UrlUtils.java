@@ -12,9 +12,9 @@ public final class UrlUtils {
         if ((item.DATA.getMedia() != null && item.DATA.getMedia().getRedditVideo() != null) || (item.DATA.getSecureMedia() != null && item.DATA.getSecureMedia().getRedditVideo() != null)) {
             ImmutableItemDataMediaVideo iidmv = item.DATA.getMedia() == null ? item.DATA.getSecureMedia().getRedditVideo() : item.DATA.getMedia().getRedditVideo();
             if (iidmv == null) {
-                Log.e("UrlUtils.extractReddit", "iidmv null, fackup");
+                Log.e("UrlUtils.extractReddit", "iidmv null, fuckup");
             } else {
-                Log.d("UrlUtils.extractReddit", String.format("%s %s %s",iidmv.getDashUrl(),iidmv.getHlsUrl(),iidmv.getFallbackUrl()));
+                Log.d("UrlUtils.extractReddit", String.format("%s %s %s", iidmv.getDashUrl(), iidmv.getHlsUrl(), iidmv.getFallbackUrl()));
                 if (null != iidmv.getDashUrl()) {
                     url = iidmv.getDashUrl();
                 } else if (iidmv.getHlsUrl() != null) {

@@ -31,11 +31,11 @@ import java.lang.annotation.RetentionPolicy;
 public class DefaultZoomableController
         implements ZoomableController, TransformGestureDetector.Listener {
 
-    public static final int LIMIT_NONE = 0;
-    public static final int LIMIT_TRANSLATION_X = 1;
-    public static final int LIMIT_TRANSLATION_Y = 2;
-    public static final int LIMIT_SCALE = 4;
-    public static final int LIMIT_ALL = LIMIT_TRANSLATION_X | LIMIT_TRANSLATION_Y | LIMIT_SCALE;
+    static final int LIMIT_NONE = 0;
+    static final int LIMIT_TRANSLATION_X = 1;
+    static final int LIMIT_TRANSLATION_Y = 1 << 1;
+    static final int LIMIT_SCALE = 1 << 2;
+    static final int LIMIT_ALL = LIMIT_TRANSLATION_X | LIMIT_TRANSLATION_Y | LIMIT_SCALE;
     private static final float EPS = 1e-3f;
     private static final Class<?> TAG = DefaultZoomableController.class;
     private static final RectF IDENTITY_RECT = new RectF(0, 0, 1, 1);
@@ -61,7 +61,7 @@ public class DefaultZoomableController
     private float mMaxScaleFactor = 2.0f;
     private boolean mWasTransformCorrected;
 
-    public DefaultZoomableController(TransformGestureDetector gestureDetector) {
+    DefaultZoomableController(TransformGestureDetector gestureDetector) {
         mGestureDetector = gestureDetector;
         mGestureDetector.setListener(this);
     }
@@ -267,7 +267,7 @@ public class DefaultZoomableController
     /**
      * Sets a new zoom transformation.
      */
-    public void setTransform(Matrix newTransform) {
+    void setTransform(Matrix newTransform) {
         FLog.v(TAG, "setTransform");
         mActiveTransform.set(newTransform);
         onTransformChanged();
@@ -319,7 +319,7 @@ public class DefaultZoomableController
      */
     private void mapAbsoluteToRelative(float[] destPoints, float[] srcPoints, int numPoints) {
         for (int i = 0; i < numPoints; i++) {
-            destPoints[i * 2 + 0] = (srcPoints[i * 2 + 0] - mImageBounds.left) / mImageBounds.width();
+            destPoints[i * 2] = (srcPoints[i * 2] - mImageBounds.left) / mImageBounds.width();
             destPoints[i * 2 + 1] = (srcPoints[i * 2 + 1] - mImageBounds.top) / mImageBounds.height();
         }
     }
@@ -365,7 +365,7 @@ public class DefaultZoomableController
      * @param limitFlags   whether to limit translation and/or scale.
      * @return whether or not the transform has been corrected due to limitation
      */
-    protected boolean calculateZoomToPointTransform(
+    boolean calculateZoomToPointTransform(
             Matrix outTransform,
             float scale,
             PointF imagePoint,
@@ -388,7 +388,7 @@ public class DefaultZoomableController
     /**
      * Gets the gesture detector.
      */
-    protected TransformGestureDetector getDetector() {
+    TransformGestureDetector getDetector() {
         return mGestureDetector;
     }
 
@@ -443,7 +443,7 @@ public class DefaultZoomableController
      * @param limitTypes   whether to limit translation and/or scale.
      * @return whether or not the transform has been corrected due to limitation
      */
-    protected boolean calculateGestureTransform(
+    private boolean calculateGestureTransform(
             Matrix outTransform,
             @LimitFlag int limitTypes) {
         TransformGestureDetector detector = mGestureDetector;
@@ -674,6 +674,6 @@ public class DefaultZoomableController
             LIMIT_ALL
     })
     @Retention(RetentionPolicy.SOURCE)
-    public @interface LimitFlag {
+    @interface LimitFlag {
     }
 }

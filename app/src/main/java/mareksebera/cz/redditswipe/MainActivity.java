@@ -86,10 +86,6 @@ public class MainActivity extends AppCompatActivity {
     private void createSideMenu() {
         mSideMenu.add(Menu.NONE, MENU_ITEM_FULLSCREEN, Menu.NONE, "Toggle fullscreen")
                 .setIcon(R.drawable.ic_fullscreen);
-
-        mSideMenu.add(Menu.NONE, 1337, Menu.NONE, "r/all");
-        mSideMenu.add(Menu.NONE, 1338, Menu.NONE, "r/funny");
-        mSideMenu.add(Menu.NONE, 1339, Menu.NONE, "r/gifs");
     }
 
     @Override
@@ -153,11 +149,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-            // hide actionbar
-            if (fullscreen) {
-                activity.getSupportActionBar().hide();
-            } else {
-                activity.getSupportActionBar().show();
+            ActionBar ab = activity.getSupportActionBar();
+            if (ab != null) {
+                if (fullscreen) {
+                    ab.hide();
+                } else {
+                    ab.show();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

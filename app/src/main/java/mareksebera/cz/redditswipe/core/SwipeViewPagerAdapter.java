@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import mareksebera.cz.redditswipe.dao.DataLayer;
 import mareksebera.cz.redditswipe.fragments.BasicItemFragment;
 import mareksebera.cz.redditswipe.fragments.ImageItemFragment;
 import mareksebera.cz.redditswipe.fragments.TextItemFragment;
@@ -42,6 +43,7 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
                 SwipeViewPagerAdapter.this.items.addAll(response.getData().getChildren());
                 SwipeViewPagerAdapter.this.notifyDataSetChanged();
                 SwipeViewPagerAdapter.this.lastResponse = response;
+                DataLayer.saveSubredditNames(SwipeViewPagerAdapter.this.items);
             }
 
             @Override
@@ -85,6 +87,7 @@ public class SwipeViewPagerAdapter extends FragmentStatePagerAdapter {
         Log.d("PagerAdapter", "notifyDataSetChanged, new count " + items.size() + ", after: " + (lastResponse != null ? lastResponse.getData().getAfter() : ""));
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int i) {
         RedditItem item = internalGetItem(i);

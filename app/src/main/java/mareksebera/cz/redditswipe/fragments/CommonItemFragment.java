@@ -19,6 +19,8 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import mareksebera.cz.redditswipe.R;
 import mareksebera.cz.redditswipe.core.RedditItem;
 
@@ -53,12 +55,12 @@ public abstract class CommonItemFragment extends Fragment {
         if (item != null) {
             type.setText(item.TYPE.toString());
             subreddit.setText(String.format("r/%s", item.DATA.getSubreddit()));
-            title.setText(item.DATA.getTitle());
-            author.setText(String.format("u/%s", item.DATA.getAuthor()));
+            title.setText(StringEscapeUtils.unescapeHtml4(item.DATA.getTitle()));
+            author.setText(String.format("u/%s", StringEscapeUtils.unescapeHtml4(item.DATA.getAuthor())));
             url.setText(item.DATA.getUrl());
 
             if (dummy_url != null) {
-                dummy_url.setText(item.DATA.getUrl());
+                dummy_url.setText(StringEscapeUtils.unescapeHtml4(item.DATA.getUrl()));
             }
 
             if (dummy_thumbnail != null) {

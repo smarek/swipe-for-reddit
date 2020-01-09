@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-apply plugin: "com.github.ben-manes.versions"
+apply plugin: 'com.github.ben-manes.versions'
 
 buildscript {
 
@@ -10,10 +10,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.27.0"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
+        classpath 'io.objectbox:objectbox-gradle-plugin:2.5.0'
     }
 }
 
@@ -29,24 +27,24 @@ task clean(type: Delete) {
 }
 
 dependencyUpdates {
-  // Example 1: reject all non stable versions
-  rejectVersionIf {
-    isNonStable(it.candidate.version)
-  }
-
-  // Example 2: disallow release candidates as upgradable versions from stable versions
-  rejectVersionIf {
-    isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)
-  }
-
-  // Example 3: using the full syntax
-  resolutionStrategy {
-    componentSelection {
-      all {
-        if (isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)) {
-          reject('Release candidate')
-        }
-      }
+    // Example 1: reject all non stable versions
+    rejectVersionIf {
+        isNonStable(it.candidate.version)
     }
-  }
+
+    // Example 2: disallow release candidates as upgradable versions from stable versions
+    rejectVersionIf {
+        isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)
+    }
+
+    // Example 3: using the full syntax
+    resolutionStrategy {
+        componentSelection {
+            all {
+                if (isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)) {
+                    reject('Release candidate')
+                }
+            }
+        }
+    }
 }

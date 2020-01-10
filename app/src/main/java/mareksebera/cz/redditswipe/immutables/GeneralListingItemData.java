@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Value.Immutable
 @JsonDeserialize(as = ImmutableGeneralListingItemData.class)
@@ -52,6 +53,10 @@ public interface GeneralListingItemData extends Serializable {
     @JsonProperty(value = "secure_media")
     @Nullable
     ImmutableItemDataMedia getSecureMedia();
+
+    @JsonProperty(value = "crosspost_parent_list")
+    @Nullable
+    List<ImmutableGeneralListingItemData> getCrosspostParentList();
 
     @JsonProperty(value = "preview")
     @Nullable

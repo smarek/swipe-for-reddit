@@ -1,5 +1,6 @@
 package mareksebera.cz.redditswipe.fragments;
 
+import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.drawable.ProgressBarDrawable;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.imagepipeline.image.ImageInfo;
 
 import mareksebera.cz.redditswipe.R;
-import mareksebera.cz.redditswipe.fresco.DefaultZoomableController;
-import mareksebera.cz.redditswipe.fresco.ZoomableController;
-import mareksebera.cz.redditswipe.fresco.ZoomableDraweeView;
+import me.relex.photodraweeview.PhotoDraweeView;
 
 public class ImageItemFragment extends CommonItemFragment {
 
@@ -28,22 +25,22 @@ public class ImageItemFragment extends CommonItemFragment {
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         assert v != null;
-        ZoomableDraweeView drawee = v.findViewById(R.id.image_fragment_image);
-        if (drawee != null) {
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setTapToRetryEnabled(true)
-                    .setUri(item.DATA.getUrl())
-                    .setAutoPlayAnimations(true)
-                    .build();
-            GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
-                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .setProgressBarImage(new ProgressBarDrawable())
-                    .build();
-            ZoomableController zoomable = DefaultZoomableController.newInstance();
-
-            drawee.setController(controller);
-            drawee.setHierarchy(hierarchy);
-            drawee.setZoomableController(zoomable);
+        PhotoDraweeView mPhotoDraweeView = v.findViewById(R.id.image_fragment_image);
+        if (mPhotoDraweeView != null) {
+            PipelineDraweeControllerBuilder controller = Fresco.newDraweeControllerBuilder();
+            controller.setUri(item.DATA.getUrl());
+            controller.setOldController(mPhotoDraweeView.getController());
+            controller.setControllerListener(new BaseControllerListener<ImageInfo>() {
+                @Override
+                public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                    super.onFinalImageSet(id, imageInfo, animatable);
+                    if (imageInfo == null) {
+                        return;
+                    }
+                    mPhotoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
+                }
+            });
+            mPhotoDraweeView.setController(controller.build());
         }
 
         return v;

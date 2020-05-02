@@ -117,9 +117,7 @@ public class MainActivity extends AppCompatActivity {
         int uiOptions = activity.getWindow().getDecorView().getSystemUiVisibility();
         int newUiOptions = uiOptions;
         boolean isImmersiveModeEnabled = false;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            isImmersiveModeEnabled = ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
-        }
+        isImmersiveModeEnabled = ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
         if (isImmersiveModeEnabled) {
             Log.i(activity.getPackageName(), "Turning immersive mode mode off. ");
         } else {
@@ -130,9 +128,7 @@ public class MainActivity extends AppCompatActivity {
         newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
         // Status bar hiding: Backwards compatible to Jellybean
-        if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
+        newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
 
         // Immersive mode: Backward compatible to KitKat.
         // Note that this flag doesn't do anything by itself, it only augments the behavior
@@ -142,9 +138,7 @@ public class MainActivity extends AppCompatActivity {
         // Sticky immersive mode differs in that it makes the navigation and status bars
         // semi-transparent, and the UI flag does not get cleared when the user interacts with
         // the screen.
-        if (Build.VERSION.SDK_INT > 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
+        newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         activity.getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
 
 

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <mareksebera.cz.redditswipe.fresco.ZoomableDraweeView
+    <me.relex.photodraweeview.PhotoDraweeView
         android:id="@+id/image_fragment_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -99,6 +99,10 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
                     Log.d("loadVideo", "loading GFYCAT");
                     loadGfycat();
                     return;
+                } else if (RedditItemType.isRedgifs(uri)) {
+                    Log.d("loadVideo", "loading REDGIFS");
+                    loadRedgifs();
+                    return;
                 } else {
                     Log.d(TAG, "Not gfycat");
                 }
@@ -176,6 +180,23 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
                 videoView.setVideoPath(response.getGfyItem().getMP4Url());
             }
         });
+    }
+
+    private void loadRedgifs() {
+        String redgifsApiUrl = item.DATA.getUrl();
+        Pattern p = Pattern.compile(".*redgifs.com\\/(watch\\/)?([\\w]+).*");
+        Matcher m = p.matcher(redgifsApiUrl);
+        if (m.matches()) {
+            redgifsApiUrl = "https://api.redgifs.com/v1/gfycats/" + m.group(2);
+            Log.d(TAG, "redgifs url: " + redgifsApiUrl);
+            Volley.newRequestQueue(requireContext()).add(new VolleyJacksonRequest<ImmutableGfycatBase>(redgifsApiUrl, error -> Log.d("loadGfycat", "error", error), ImmutableGfycatBase.class) {
+                @Override
+                protected void deliverResponse(ImmutableGfycatBase response) {
+                    Log.d("loadGfycat", "response: " + response.getGfyItem().getMP4Url());
+                    videoView.setVideoPath(response.getGfyItem().getMP4Url());
+                }
+            });
+        }
     }
 
     @Override

@@ -54,6 +54,11 @@ public enum RedditItemType {
         return hostContains(host, "gfycat.com");
     }
 
+    public static boolean isRedgifs(URI uri) {
+        final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
+        return hostContains(host, "redgifs.com");
+    }
+
     public static boolean isSelfText(@NonNull ImmutableGeneralListingItem item) {
         return item.getData().getIsSelf() && (item.getData().getSelftext() != null | item.getData().getSelftextHtml() != null);
     }
@@ -93,7 +98,7 @@ public enum RedditItemType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return ((hostContains(host, "gfycat.com") || hostContains(host, "v.redd.it")) && !path.endsWith(".gif"))
+            return ((hostContains(host, "gfycat.com") || hostContains(host, "redgifs.com") || hostContains(host, "v.redd.it")) && !path.endsWith(".gif"))
                     || path.endsWith(".mp4") || path.endsWith(".webm") || path.endsWith(".gifv");
 
         } catch (NullPointerException e) {

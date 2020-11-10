@@ -27,4 +27,8 @@ public interface GfycatItem extends Serializable {
     @JsonProperty("webpUrl")
     String getWEBPUrl();
 
+    @Nullable
+    @JsonProperty("mobileUrl")
+    String getMobileUrl();
+
 }

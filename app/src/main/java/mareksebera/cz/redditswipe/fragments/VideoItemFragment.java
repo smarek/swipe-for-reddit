@@ -176,8 +176,8 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
         Volley.newRequestQueue(requireContext()).add(new VolleyJacksonRequest<ImmutableGfycatBase>(gfycatApiUrl, error -> Log.d("loadGfycat", "error", error), ImmutableGfycatBase.class) {
             @Override
             protected void deliverResponse(ImmutableGfycatBase response) {
-                Log.d("loadGfycat", "response: " + response.getGfyItem().getMP4Url());
-                videoView.setVideoPath(response.getGfyItem().getMP4Url());
+                Log.d("loadGfycat", "response url: " + response.getGfyItem().getMobileUrl());
+                videoView.setVideoPath(response.getGfyItem().getMobileUrl());
             }
         });
     }
@@ -192,8 +192,8 @@ public class VideoItemFragment extends CommonItemFragment implements OnPreparedL
             Volley.newRequestQueue(requireContext()).add(new VolleyJacksonRequest<ImmutableGfycatBase>(redgifsApiUrl, error -> Log.d("loadGfycat", "error", error), ImmutableGfycatBase.class) {
                 @Override
                 protected void deliverResponse(ImmutableGfycatBase response) {
-                    Log.d("loadGfycat", "response: " + response.getGfyItem().getMP4Url());
-                    videoView.setVideoPath(response.getGfyItem().getMP4Url());
+                    Log.d("loadRedgifs", "response url: " + response.getGfyItem().getMobileUrl());
+                    videoView.setVideoPath(response.getGfyItem().getMobileUrl());
                 }
             });
         }
